@@ -1,4 +1,4 @@
-FROM golang:1.25.4-alpine3.22 AS build
+FROM golang:1.25.7-alpine3.22 AS build
 
 WORKDIR /app
 COPY . .
@@ -13,6 +13,6 @@ WORKDIR /app
 COPY --from=build /app/build/executable/app ./app
 #COPY --from=build /app/.env ./.env
 
-EXPOSE 8000
+EXPOSE 8080
 
 CMD ["/app/app"]
