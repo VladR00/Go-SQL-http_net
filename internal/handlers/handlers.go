@@ -2,17 +2,18 @@ package handlers
 
 import (
 	"Go-SQL-http_net/internal/models"
+	"Go-SQL-http_net/internal/storage/postgre"
 	"encoding/json"
 	"fmt"
 	"net/http"
 )
 
 type StorageHandler struct {
-	Db int
+	Storage *postgre.Storage
 }
 
-func NewStorageHandler(storage int) *StorageHandler {
-	return &StorageHandler{Db: storage}
+func NewStorageHandler(storage *postgre.Storage) *StorageHandler {
+	return &StorageHandler{Storage: storage}
 }
 
 func (s *StorageHandler) HandlerCreateDepartment(w http.ResponseWriter, r *http.Request) (string, error) {
@@ -32,8 +33,14 @@ func (s *StorageHandler) HandlerCreateDepartment(w http.ResponseWriter, r *http.
 		return "Invalid JSON", fmt.Errorf("empty param")
 	}
 
+	newDepartment, err := s.Storage.CreateDepartment(request)
+	if err != nil {
+		models.DefaultResponse{Type: "Error", Message: fmt.Sprintf("Create department: %v", err)}.Response(w, http.StatusForbidden)
+		return "Create Department", err
+	}
+
 	w.WriteHeader(http.StatusOK)
 	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(request)
-	return fmt.Sprintf("Department created successfully. name:%s, parrent_id:%d", request.Name, request.Parent_id), nil
+	json.NewEncoder(w).Encode(newDepartment)
+	return fmt.Sprintf("Department created successfully. id:%d, name:%s, parrent_id:%d, created_at:%v", newDepartment.ID, newDepartment.Name, newDepartment.Parent_id, newDepartment.Created_at), nil
 }
