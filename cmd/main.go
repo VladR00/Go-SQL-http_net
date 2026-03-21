@@ -26,9 +26,7 @@ func main() {
 
 	storage := postgre.NewPostgreSQL(db)
 	mw := middleware.NewMiddleware(storage)
-
-	http.HandleFunc("/departments/", mw.HandlerCreateDepartment) //POST
-
+	http.HandleFunc("/departments/", mw.Handler)
 	slog.Info("Server start", "Port", cfg.Server.Port)
 	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%d", cfg.Server.Port), nil))
 }
