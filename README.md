@@ -6,4 +6,4 @@ docker compose up --build
 
 Сервер будет доступен на **http://localhost:8080**
 
-## Для работы переименовать этот файл `.envExample` ->`.env`
+## Для работы переименовать `.envExample` ->`.env`
