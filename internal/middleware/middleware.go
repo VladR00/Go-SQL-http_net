@@ -8,17 +8,19 @@ import (
 )
 
 type Middleware struct {
-	Storage handlers.StorageHandler
+	handler handlers.StorageHandler
 }
 
 func NewMiddleware(storage *postgre.Storage) *Middleware {
-	return &Middleware{Storage: handlers.StorageHandler{Storage: storage}}
+	return &Middleware{
+		handler: handlers.StorageHandler{Storage: storage},
+	}
 }
 
-func (mw *Middleware) HandlerCreateDepartment(w http.ResponseWriter, r *http.Request) {
-	if msg, err := mw.Storage.HandlerCreateDepartment(w, r); err != nil {
-		slog.Error("HandlerCreateDepartment", msg, err)
-	} else {
-		slog.Info("HandlerCreateDepartment", "Message", msg)
-	}
+// Handler is the main middleware handler that routes all requests
+func (mw *Middleware) Handler(w http.ResponseWriter, r *http.Request) {
+	slog.Debug("Incoming request", "method", r.Method, "path", r.URL.Path)
+
+	// Call the storage handler
+	mw.handler.Handler(w, r)
 }
